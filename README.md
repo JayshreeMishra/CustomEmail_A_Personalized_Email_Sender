@@ -1,1 +1,1 @@
-**#CustomEmail: A Personalized Email Sender**
+# CustomEmail: A Personalized Email Sender
