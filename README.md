@@ -1,1 +1,1 @@
-# CustomConnect_A_Personalized_Email_Sender
+**# CustomEmail: A Personalized Email Sender**
