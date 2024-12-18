@@ -27,7 +27,17 @@ CustomEmail/
 │   ├── app_config.py               # Configs for Flask (debug mode, etc.)
 │   ├── logging_config.py           # Logging settings
 │   └── secrets.yaml                # Sensitive info (e.g., API keys)
-│
+|
+├── database/
+│   ├── __init__.py
+│   ├── models.py              # Define MongoEngine or similar ORM models
+│   └── queries.py             # Common database queries
+|
+├── docs/
+│   ├── api_docs.md
+│   └── usage.md
+|
+|
 ├── logs/                           # Logs for debugging
 │   └── app.log
 │
