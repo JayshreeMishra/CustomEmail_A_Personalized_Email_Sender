@@ -1,4 +1,7 @@
-flask
-pandas
-numpy
+flask==3.1.0
+Flask-WTF-1.2.2 wtforms-3.2.1
+pandas==2.2.3
+pyyaml==6.0.2
+python-box== 7.3.0
+ensure==1.0.4
 -e .
