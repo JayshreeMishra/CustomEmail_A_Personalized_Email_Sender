@@ -4,10 +4,9 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash
 from test_email_sender import send_email
 from config.exception import CustomException as ex
-
 
 app= Flask(__name__, template_folder='test_template')
 app.secret_key = 'mysecretkey'
@@ -28,7 +27,7 @@ def index():
             except Exception as e:
                 flash(f"Failed to send email: {str(e)}", "danger")
         else:
-            flash("All fields are required!", "warning")
+             flash("All fields are required!", "warning")
 
     return render_template('test_index.html')
 

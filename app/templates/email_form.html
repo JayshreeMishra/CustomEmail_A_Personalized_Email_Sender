@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sender</title>
+</head>
+<body>
+    <h2>Email Sender</h2>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Email Form -->
+    <form method="POST" enctype="multipart/form-data">
+        <label for="recipient">Recipient:</label>
+        <input type="email" name="recipient" required><br>
+    
+        <label for="subject">Subject:</label>
+        <input type="text" name="subject" required><br>
+    
+        <label for="message">Message:</label>
+        <textarea name="message" required style="width: 400px; height: 200px;"></textarea><br>
+    
+        <label for="file">Attach File:</label>
+        <input type="file" name="file"><br>
+    
+        <button type="submit">Send Email</button>
+    </form>    
+</body>
+</html>
