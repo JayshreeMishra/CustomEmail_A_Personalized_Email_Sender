@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Sender</title>
+    <title>CustomEmail</title>
+    <script src="placeholder.js" defer></script> <!-- Include JavaScript -->
 </head>
 <body>
-    <h2>Email Sender</h2>
+    <h2>CustomEmail</h2>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -27,14 +28,51 @@
         <label for="sender_app_password">Sender App Password:</label>
         <input type="password" name="sender_app_password" required><br>
         
+        <!-- Recipients -->
         <label for="recipients">Recipients:</label>
-        <textarea name="recipients" rows="5" placeholder="Enter up to 50 email addresses, one per line" required></textarea>
-    
+        <textarea 
+            name="recipients" 
+            rows="10" 
+            cols="50" 
+            placeholder="Enter up to 50 email addresses, one per line" 
+            required>
+        </textarea>
+        <br><br>
+        
+        <!-- Recipient Names -->
+        <label for="recipient_names">Recipient Names:</label>
+        <textarea 
+            name="recipient_names" 
+            rows="10" 
+            cols="50" 
+            placeholder="Enter up to 50 recipient names, one per line" 
+            required>
+        </textarea>
+        <br><br>
+        
+        <!-- Recipient Company Names -->
+        <label for="recipient_companies">Recipient Company Names:</label>
+        <textarea 
+            name="recipient_companies" 
+            rows="10" 
+            cols="50" 
+            placeholder="Enter up to 50 company names, one per line" 
+            required>
+        </textarea>
+        <br><br>
+        
         <label for="subject">Subject:</label>
         <input type="text" name="subject" required><br>
     
         <label for="message">Message:</label>
-        <textarea name="message" required style="width: 400px; height: 200px;"></textarea><br>
+        <textarea id="message" name="message" required style="width: 400px; height: 200px;"></textarea><br>
+    
+        <!-- Buttons for Placeholders -->
+        <div>
+            <button type="button" onclick="insertPlaceholder('recipient name')">Recipient Name</button>
+            <button type="button" onclick="insertPlaceholder('recipient company')">Recipient Company</button>
+        </div>
+        <br>
     
         <label for="file">Attach File:</label>
         <input type="file" name="file"><br>
