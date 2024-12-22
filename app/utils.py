@@ -41,7 +41,7 @@ def attach_file(email: MIMEMultipart, attachment: Optional[str]) -> None:
                 raise CustomException(f"An error occurred while attaching the file: {str(e)}", sys)
             
 
-
+@ensure_annotations
 def authenticate_user(sender_email, sender_password):
     try:
         smtp_servers = {

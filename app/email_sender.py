@@ -11,31 +11,45 @@ from app.utils import attach_file, authenticate_user
 
 
 
-def send_email(sender_email, sender_password, recipient, subject, message, attachment=None):
+def send_email(sender_email, sender_password, recipients, subject, message, attachment=None):
     try:
         #Authenticate sender email
         smtp_server, smtp_user, smtp_password= authenticate_user(sender_email, sender_password) 
 
-        # Compose the email
-        email = MIMEMultipart()
-        email["Subject"] = subject
-        email["From"] = smtp_user
-        email["To"] = recipient
+        # Iterate over each recipient to send an individual email
+        for recipient in recipients:
+            # Compose the email
+            email = MIMEMultipart()
+            email["Subject"] = subject
+            email["From"] = smtp_user
+            email["To"] = recipient
 
-        # Attach the message body
-        email.attach(MIMEText(message, 'plain'))
+            # Attach the message body
+            email.attach(MIMEText(message, 'plain'))
 
-        # Attach file if present and allowed
-        if attachment:
-            logger.info(f"Attaching file: {attachment}")
-            attach_file(email, attachment)
-        
-        # Send the email
-        with smtplib.SMTP(smtp_server, 587) as server:
-            server.starttls()
-            server.login(smtp_user, smtp_password)
-            server.sendmail(smtp_user, recipient, email.as_string())
+            # Attach file if present and allowed
+            if attachment:
+                logger.info(f"Attaching file: {attachment}")
+                attach_file(email, attachment)
+            
+            try:
+                # Send the email
+                with smtplib.SMTP(smtp_server, 587) as server:
+                    server.starttls()
+                    server.login(smtp_user, smtp_password)
+                    server.sendmail(smtp_user, recipient, email.as_string())
+                logger.info(f"Email sent successfully to {recipient}")
+            except Exception as e:
+                logger.error(f"Failed to send email to {recipient}: {e}")
+
         return "Email sent successfully with attachment!" if attachment else "Email sent successfully without attachment!"
     except Exception as e:
         logger.error(f"Error occurred: {e}")
         raise CustomException(f"Failed to send email: {e}", sys)
+    
+
+
+
+    
+        
+        

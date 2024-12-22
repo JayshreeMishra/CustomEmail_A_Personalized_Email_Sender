@@ -1,10 +1,10 @@
-import os, sys
+import sys
+import os
 from flask import Flask, render_template, request, flash
 from werkzeug.utils import secure_filename
-import email
 
 from app.email_sender import send_email
-from config.exception import CustomException
+from config.exception import CustomException as ex
 
 template_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app', 'templates')
 
@@ -19,10 +19,7 @@ os.makedirs(upload_folder, exist_ok=True)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method=='POST':
-        sender_email= request.form.get('sender_email')
-        sender_password= request.form.get('sender_app_password')
-        recipient_input= request.form.get('recipients')
-        recipients= [email.strip() for email in recipient_input.split('\n') if email.strip()]
+        recipient= request.form.get('recipient')
         subject= request.form.get('subject')
         message= request.form.get('message')
 
@@ -38,9 +35,9 @@ def index():
 
 
         #Send email
-        if recipients and subject and message:
+        if recipient and subject and message:
             try:
-                result = send_email(sender_email, sender_password, recipients, subject, message, attachment)
+                result = send_email(recipient, subject, message, attachment)
             except Exception as e:
                 result = f"Error sending email: {str(e)}"
         else:
