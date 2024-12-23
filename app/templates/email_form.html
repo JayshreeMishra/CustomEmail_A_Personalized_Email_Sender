@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CustomEmail</title>
-    <script src="placeholder.js" defer></script> <!-- Include JavaScript -->
+    <script src="{{ url_for('static', filename='placeholder.js') }}"></script>
 </head>
 <body>
     <h2>CustomEmail</h2>
@@ -35,8 +35,7 @@
             rows="10" 
             cols="50" 
             placeholder="Enter up to 50 email addresses, one per line" 
-            required>
-        </textarea>
+            required></textarea>
         <br><br>
         
         <!-- Recipient Names -->
@@ -46,8 +45,7 @@
             rows="10" 
             cols="50" 
             placeholder="Enter up to 50 recipient names, one per line" 
-            required>
-        </textarea>
+            required></textarea>
         <br><br>
         
         <!-- Recipient Company Names -->
@@ -57,8 +55,7 @@
             rows="10" 
             cols="50" 
             placeholder="Enter up to 50 company names, one per line" 
-            required>
-        </textarea>
+            required></textarea>
         <br><br>
         
         <label for="subject">Subject:</label>
@@ -69,10 +66,11 @@
     
         <!-- Buttons for Placeholders -->
         <div>
-            <button type="button" onclick="insertPlaceholder('recipient name')">Recipient Name</button>
-            <button type="button" onclick="insertPlaceholder('recipient company')">Recipient Company</button>
+            <button type="button" onclick="insertPlaceholder('recipient name')">Insert Recipient Name</button>
+            <button type="button" onclick="insertPlaceholder('recipient company')">Insert Recipient Company</button>
         </div>
         <br>
+
     
         <label for="file">Attach File:</label>
         <input type="file" name="file"><br>

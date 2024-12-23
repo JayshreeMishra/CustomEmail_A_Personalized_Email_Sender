@@ -1,6 +1,8 @@
-// Function to insert placeholder into the message box
 function insertPlaceholder(placeholder) {
+    console.log(`Inserting placeholder: ${placeholder}`);
     const messageBox = document.getElementById('message');
+    if (!messageBox) return;
+
     const cursorPosition = messageBox.selectionStart; // Get cursor position
     const textBeforeCursor = messageBox.value.slice(0, cursorPosition);
     const textAfterCursor = messageBox.value.slice(cursorPosition);

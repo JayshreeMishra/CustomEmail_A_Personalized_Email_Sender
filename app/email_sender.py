@@ -11,21 +11,22 @@ from app.utils import attach_file, authenticate_user
 
 
 
-def send_email(sender_email, sender_password, recipients, subject, message, attachment=None):
+def send_email(sender_email, sender_password, recipients, subject, message, recipient_names, recipient_companies, attachment=None):
     try:
         #Authenticate sender email
         smtp_server, smtp_user, smtp_password= authenticate_user(sender_email, sender_password) 
 
         # Iterate over each recipient to send an individual email
-        for recipient in recipients:
-            # Compose the email
+        for recipient, name, company in zip(recipients, recipient_names, recipient_companies):
+        # Compose the email
             email = MIMEMultipart()
             email["Subject"] = subject
             email["From"] = smtp_user
             email["To"] = recipient
 
-            # Attach the message body
-            email.attach(MIMEText(message, 'plain'))
+            # Customize the message with placeholders
+            customized_message = message.replace('|recipient name|', name).replace('|recipient company|', company)
+            email.attach(MIMEText(customized_message, 'plain'))
 
             # Attach file if present and allowed
             if attachment:
