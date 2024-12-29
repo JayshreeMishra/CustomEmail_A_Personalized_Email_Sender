@@ -5,6 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CustomEmail</title>
     <script src="{{ url_for('static', filename='placeholder.js') }}"></script>
+    <script>
+        // Function to enforce the line limit
+        function enforceLineLimit(textarea, maxLines) {
+            textarea.addEventListener('input', function () {
+                // Split the textarea value by lines
+                const lines = textarea.value.split("\n");
+
+                // If the number of lines exceeds the max limit
+                if (lines.length > maxLines) {
+                    alert(`You can only enter up to ${maxLines} lines.`);
+                    // Remove the extra lines
+                    textarea.value = lines.slice(0, maxLines).join("\n");
+                }
+            });
+        }
+
+        // Apply the line limit enforcement on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const maxLines = 50;
+
+            // Get all textareas to enforce the limit
+            const recipientsTextarea = document.getElementsByName("recipients")[0];
+            const recipientNamesTextarea = document.getElementsByName("recipient_names")[0];
+            const recipientCompaniesTextarea = document.getElementsByName("recipient_companies")[0];
+
+            // Enforce limits for each textarea
+            enforceLineLimit(recipientsTextarea, maxLines);
+            enforceLineLimit(recipientNamesTextarea, maxLines);
+            enforceLineLimit(recipientCompaniesTextarea, maxLines);
+        });
+    </script>
 </head>
 <body>
     <h2>CustomEmail</h2>
