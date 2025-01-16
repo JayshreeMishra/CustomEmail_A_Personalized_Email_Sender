@@ -26,6 +26,12 @@ class SpamDataIngestion:
             df=pd.read_csv(r"ml\data\email_spam_classification.csv")
             logger.info("Read the dataset as dataframe")
 
+            df.rename(columns={'v1': 'Type', 'v2': 'Mail_Text'}, inplace=True)
+            df.drop(columns=['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], inplace=True)
+
+            if 'Type' not in df.columns or 'Mail_Text' not in df.columns:
+                raise CustomException("Required columns 'Type' and 'Mail_Text' are not present after renaming.", sys)
+
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
 
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
@@ -53,3 +59,14 @@ if __name__=="__main__":
     obj= SpamDataIngestion()
     obj.initiate_data_ingestion()
 """
+
+#This is to test data_transformation
+from ml.components.spam_detection.data_transformation import SpamDataTransformation
+from ml.components.spam_detection.data_transformation import SpamDataTransformationConfig
+
+if __name__=="__main__":
+    obj= SpamDataIngestion()
+    train_data, test_data= obj.initiate_data_ingestion()
+
+    data_transformation= SpamDataTransformation()
+    data_transformation.initiate_data_transformation(train_data, test_data)
