@@ -47,7 +47,9 @@ class SpamDataIngestion:
         
 
 
-#this is to test the data ingestion component
+"""
+this is to test the data ingestion component
 if __name__=="__main__":
     obj= SpamDataIngestion()
     obj.initiate_data_ingestion()
+"""
