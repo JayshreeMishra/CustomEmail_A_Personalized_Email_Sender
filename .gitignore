@@ -131,6 +131,7 @@ env.bak/
 venv.bak/
 upload/
 backup/
+customemail/
 
 # Spyder project settings
 .spyderproject
