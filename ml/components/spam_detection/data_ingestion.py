@@ -73,7 +73,7 @@ if __name__=="__main__":
     data_transformation.initiate_data_transformation(train_data, test_data)
 """
 
-#This is to test model_trainer
+'''This is to test model_trainer
 from ml.components.spam_detection.data_transformation import SpamDataTransformation
 from ml.components.spam_detection.data_transformation import SpamDataTransformationConfig
 from ml.components.spam_detection.model_trainer import SpamModelTrainer
@@ -96,3 +96,4 @@ if __name__=="__main__":
     
     model_trainer= SpamModelTrainer()
     model_trainer.initiate_model_trainer(train_texts, train_labels, test_texts, test_labels)
+'''
