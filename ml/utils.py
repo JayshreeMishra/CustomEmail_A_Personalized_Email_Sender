@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import r2_score
+from sklearn.metrics import accuracy_score, precision_score
 
 from config.exception import CustomException
 from config.logging_config import logger
@@ -23,11 +23,9 @@ def save_obj(file_path, obj):
 
 def evaluate_model(X_train, y_train, X_test, y_test, models):
     try:
-        report={}
+        report = {}
 
-        for i in range(len(list(models))):
-            model= list(models.values())[i]
-
+        for model_name, model in models.items():
             # Check if the model has a `verbose` or `logging_level` parameter, e.g., CatBoost
             if hasattr(model, 'verbose'):
                 model.set_params(verbose=0)
@@ -35,21 +33,27 @@ def evaluate_model(X_train, y_train, X_test, y_test, models):
                 model.set_params(logging_level='Silent')
             
             #redirect stdout to supress output
-            old_stdout= sys.stdout
-            sys.stdout= io.StringIO()
+            old_stdout = sys.stdout
+            sys.stdout = io.StringIO()
 
             model.fit(X_train, y_train)
 
             #restore stdout
-            sys.stdout= old_stdout
+            sys.stdout = old_stdout
 
-            y_train_pred= model.predict(X_train)
-            y_test_pred= model.predict(X_test)
+            y_train_pred = model.predict(X_train)
+            y_test_pred = model.predict(X_test)
 
-            train_model_score= r2_score(y_train, y_train_pred)
-            test_model_score= r2_score(y_test, y_test_pred)
+            # Evaluation metrics
+            train_accuracy = accuracy_score(y_train, y_train_pred)
+            test_accuracy = accuracy_score(y_test, y_test_pred)
+            test_precision = precision_score(y_test, y_test_pred)
 
-            report[list(models.keys())[i]]= test_model_score
+            report[model_name] = {
+                "Train Accuracy": train_accuracy,
+                "Test Accuracy": test_accuracy,
+                "Test Precision": test_precision
+            }
         
         return report
     except Exception as e:

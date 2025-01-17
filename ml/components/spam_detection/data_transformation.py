@@ -14,8 +14,8 @@ from ml.utils import save_obj
 
 @dataclass
 class SpamDataTransformationConfig:
-    transformed_data_path: str = os.path.join("artifacts", "transformed_data.csv")
-    preprocessor_obj_file_path: str = os.path.join('artifacts', 'text_preprocessor.pkl')
+    transformed_data_path: str = os.path.join("artifacts", "spam_transformed_data.csv")
+    preprocessor_obj_file_path: str = os.path.join('artifacts', 'spam_text_preprocessor.pkl')
 
 class SpamDataTransformation:
     def __init__(self):
@@ -59,6 +59,7 @@ class SpamDataTransformation:
         - Text transformation (text preprocessing)
         - Saving the transformed data and preprocessing object
         """
+        
         try:
             # Load training and test data
             train_df = pd.read_csv(train_path)
@@ -74,6 +75,15 @@ class SpamDataTransformation:
             train_df['Transformed_Text'] = train_df['Mail_Text'].apply(self.transform_text)
             test_df['Transformed_Text'] = test_df['Mail_Text'].apply(self.transform_text)
 
+            # Clean transformed data
+            train_df.dropna(subset=['Transformed_Text'], inplace=True)  # Drop rows with NaN in Transformed_Text
+            train_df = train_df[train_df['Transformed_Text'].str.strip() != '']  # Remove empty strings
+            train_df.reset_index(drop=True, inplace=True)  # Reset index to avoid duplicate index values
+
+            test_df.dropna(subset=['Transformed_Text'], inplace=True)  # Drop rows with NaN in Transformed_Text
+            test_df = test_df[test_df['Transformed_Text'].str.strip() != '']  # Remove empty strings
+            test_df.reset_index(drop=True, inplace=True)  # Reset index to avoid duplicate index values
+
             # Save transformed data to CSV
             os.makedirs(os.path.dirname(self.transformation_config.transformed_data_path), exist_ok=True)
             train_transformed_path = self.transformation_config.transformed_data_path.replace(".csv", "_train.csv")
@@ -88,6 +98,7 @@ class SpamDataTransformation:
             save_obj(self.transformation_config.preprocessor_obj_file_path, self.ps)
 
             return train_transformed_path, test_transformed_path
+
 
         except Exception as e:
             raise CustomException(f"Error in initiate_data_transformation: {str(e)}", sys)

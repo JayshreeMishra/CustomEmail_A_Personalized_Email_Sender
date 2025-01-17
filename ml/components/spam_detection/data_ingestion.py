@@ -26,8 +26,8 @@ class SpamDataIngestion:
             df=pd.read_csv(r"ml\data\email_spam_classification.csv")
             logger.info("Read the dataset as dataframe")
 
-            df.rename(columns={'v1': 'Type', 'v2': 'Mail_Text'}, inplace=True)
             df.drop(columns=['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], inplace=True)
+            df.rename(columns={'v1': 'Type', 'v2': 'Mail_Text'}, inplace=True)
 
             if 'Type' not in df.columns or 'Mail_Text' not in df.columns:
                 raise CustomException("Required columns 'Type' and 'Mail_Text' are not present after renaming.", sys)
@@ -60,7 +60,8 @@ if __name__=="__main__":
     obj.initiate_data_ingestion()
 """
 
-#This is to test data_transformation
+"""
+This is to test data_transformation
 from ml.components.spam_detection.data_transformation import SpamDataTransformation
 from ml.components.spam_detection.data_transformation import SpamDataTransformationConfig
 
@@ -70,3 +71,28 @@ if __name__=="__main__":
 
     data_transformation= SpamDataTransformation()
     data_transformation.initiate_data_transformation(train_data, test_data)
+"""
+
+#This is to test model_trainer
+from ml.components.spam_detection.data_transformation import SpamDataTransformation
+from ml.components.spam_detection.data_transformation import SpamDataTransformationConfig
+from ml.components.spam_detection.model_trainer import SpamModelTrainer
+from ml.components.spam_detection.model_trainer import SpamModelTrainerConfig
+
+if __name__=="__main__":
+    obj= SpamDataIngestion()
+    train_data, test_data= obj.initiate_data_ingestion()
+
+    data_transformation= SpamDataTransformation()
+    train_transformed_path, test_transformed_path=data_transformation.initiate_data_transformation(train_data, test_data)
+
+    train_data = pd.read_csv(train_transformed_path)
+    test_data = pd.read_csv(test_transformed_path)
+
+    train_texts = train_data['Transformed_Text']
+    train_labels = train_data['Type']
+    test_texts = test_data['Transformed_Text']
+    test_labels = test_data['Type']
+    
+    model_trainer= SpamModelTrainer()
+    model_trainer.initiate_model_trainer(train_texts, train_labels, test_texts, test_labels)
