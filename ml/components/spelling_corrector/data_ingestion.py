@@ -58,3 +58,13 @@ if __name__=="__main__":
     obj= SpamDataIngestion()
     obj.initiate_data_ingestion()
 """
+
+from ml.components.spelling_corrector.data_transformation import SpellingDataTransformation
+from ml.components.spelling_corrector.data_transformation import SpellingDataTransformationConfig
+
+if __name__=="__main__":
+    obj= SpellingDataIngestion()
+    train_data, test_data= obj.initiate_data_ingestion()
+
+    data_transformation= SpellingDataTransformation()
+    data_transformation.initiate_data_transformation(train_data, test_data)
