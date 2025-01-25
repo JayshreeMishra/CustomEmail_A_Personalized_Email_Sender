@@ -8,8 +8,8 @@ from config.logging_config import logger
 
 @dataclass
 class SpellingDataTransformationConfig:
-    transformed_train_data_path: str = os.path.join("artifacts", "transformed_train.csv")
-    transformed_test_data_path: str = os.path.join("artifacts", "transformed_test.csv")
+    transformed_train_data_path: str = os.path.join("artifacts", "spelling_transformed_train.csv")
+    transformed_test_data_path: str = os.path.join("artifacts", "spelling_transformed_test.csv")
 
 class SpellingDataTransformation:
     def __init__(self):
@@ -38,17 +38,38 @@ class SpellingDataTransformation:
             train_data = pd.read_csv(train_data_path)
             test_data = pd.read_csv(test_data_path)
 
-            # Tokenize the datasets
-            train_dataset = train_data.to_dict(orient='list')
-            test_dataset = test_data.to_dict(orient='list')
+            logger.info(f"Sample train data: {train_data.head()}")
+            logger.info(f"Sample test data: {test_data.head()}")
 
-            tokenized_train_dataset = self.preprocess_function(train_dataset)
-            tokenized_test_dataset = self.preprocess_function(test_dataset)
+            # Tokenize the datasets
+            tokenized_train_dataset = self.preprocess_function({
+                'input_text': train_data['input_text'].tolist(),
+                'target_text': train_data['target_text'].tolist()
+            })
+            tokenized_test_dataset = self.preprocess_function({
+                'input_text': test_data['input_text'].tolist(),
+                'target_text': test_data['target_text'].tolist()
+            })
+
+            logger.info(f"Tokenized train dataset keys: {list(tokenized_train_dataset.keys())}, sample input_ids: {tokenized_train_dataset['input_ids'][:1]}")
+            logger.info(f"Tokenized test dataset keys: {list(tokenized_test_dataset.keys())}, sample input_ids: {tokenized_test_dataset['input_ids'][:1]}")
+
 
             # Save transformed datasets
             os.makedirs(os.path.dirname(self.transformation_config.transformed_train_data_path), exist_ok=True)
-            pd.DataFrame(tokenized_train_dataset).to_csv(self.transformation_config.transformed_train_data_path, index=False)
-            pd.DataFrame(tokenized_test_dataset).to_csv(self.transformation_config.transformed_test_data_path, index=False)
+            pd.DataFrame({
+                'input_ids': tokenized_train_dataset['input_ids'],
+                'token_type_ids': tokenized_train_dataset.get('token_type_ids', []),
+                'attention_mask': tokenized_train_dataset['attention_mask'],
+                'labels': tokenized_train_dataset['labels']
+            }).to_csv(self.transformation_config.transformed_train_data_path, index=False)
+
+            pd.DataFrame({
+                'input_ids': tokenized_test_dataset['input_ids'],
+                'token_type_ids': tokenized_test_dataset.get('token_type_ids', []),
+                'attention_mask': tokenized_test_dataset['attention_mask'],
+                'labels': tokenized_test_dataset['labels']
+            }).to_csv(self.transformation_config.transformed_test_data_path, index=False)
 
             logger.info("Data transformation completed successfully")
 
@@ -56,5 +77,6 @@ class SpellingDataTransformation:
                 self.transformation_config.transformed_train_data_path,
                 self.transformation_config.transformed_test_data_path
             )
+
         except Exception as e:
             raise CustomException(e, sys)
