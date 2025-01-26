@@ -51,11 +51,10 @@ class SpellingDataIngestion:
             raise CustomException(e, sys)
         
 
-
 """
 this is to test the data ingestion component
 if __name__=="__main__":
-    obj= SpamDataIngestion()
+    obj= SpellingDataIngestion()
     obj.initiate_data_ingestion()
 """
 """
@@ -70,3 +69,31 @@ if __name__=="__main__":
     data_transformation= SpellingDataTransformation()
     data_transformation.initiate_data_transformation(train_data, test_data)
 """
+
+
+from ml.components.spelling_corrector.data_ingestion import SpellingDataIngestion
+from ml.components.spelling_corrector.data_transformation import SpellingDataTransformation
+from ml.components.spelling_corrector.model_trainer import SpellingModelTrainer
+import pandas as pd
+
+if __name__ == "__main__":
+    # Data Ingestion
+    data_ingestion = SpellingDataIngestion()
+    train_data_path, test_data_path = data_ingestion.initiate_data_ingestion()
+
+    # Data Transformation
+    data_transformation = SpellingDataTransformation()
+    transformed_train_data_path, transformed_test_data_path = data_transformation.initiate_data_transformation(
+        train_data_path, test_data_path
+    )
+
+    # Load Transformed Data (optional, for logging or further inspection)
+    train_data = pd.read_csv(transformed_train_data_path)
+    test_data = pd.read_csv(transformed_test_data_path)
+
+    # Model Training
+    model_trainer = SpellingModelTrainer()
+    corrected_data = model_trainer.initiate_model_trainer(
+        transformed_train_data_path, transformed_test_data_path
+    )
+    

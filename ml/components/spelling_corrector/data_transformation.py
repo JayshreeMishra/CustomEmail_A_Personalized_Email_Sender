@@ -16,62 +16,35 @@ class SpellingDataTransformation:
         self.transformation_config = SpellingDataTransformationConfig()
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased', use_fast=False)
 
-    def preprocess_function(self, examples):
-        inputs = self.tokenizer(
-            examples['input_text'], max_length=128, truncation=True, padding='max_length'
-        )
-        targets = self.tokenizer(
-            examples['target_text'], max_length=128, truncation=True, padding='max_length'
-        )
-
-        labels = [
-            [(label if label != self.tokenizer.pad_token_id else -100) for label in label_seq]
-            for label_seq in targets['input_ids']
-        ]
-        inputs['labels'] = labels
-        return inputs
+    def preprocess_text(self, text):
+        return text.strip().lower()
+    
+    def transform_data(self, data):
+        try:
+            logger.info("Starting data preprocessing transformation")
+            data['input_text'] = data['input_text'].apply(self.preprocess_text)
+            logger.info("Data transformation completed successfully")
+            return data
+        except Exception as e:
+            raise CustomException(e, sys)
 
     def initiate_data_transformation(self, train_data_path, test_data_path):
         logger.info("Entered the data transformation component")
         try:
-            # Load datasets
+            logger.info("Reading train and test datasets")
             train_data = pd.read_csv(train_data_path)
             test_data = pd.read_csv(test_data_path)
 
-            logger.info(f"Sample train data: {train_data.head()}")
-            logger.info(f"Sample test data: {test_data.head()}")
-
-            # Tokenize the datasets
-            tokenized_train_dataset = self.preprocess_function({
-                'input_text': train_data['input_text'].tolist(),
-                'target_text': train_data['target_text'].tolist()
-            })
-            tokenized_test_dataset = self.preprocess_function({
-                'input_text': test_data['input_text'].tolist(),
-                'target_text': test_data['target_text'].tolist()
-            })
-
-            logger.info(f"Tokenized train dataset keys: {list(tokenized_train_dataset.keys())}, sample input_ids: {tokenized_train_dataset['input_ids'][:1]}")
-            logger.info(f"Tokenized test dataset keys: {list(tokenized_test_dataset.keys())}, sample input_ids: {tokenized_test_dataset['input_ids'][:1]}")
-
+            logger.info("Applying data transformation to train and test datasets")
+            transformed_train_data = self.transform_data(train_data)
+            transformed_test_data = self.transform_data(test_data)
 
             # Save transformed datasets
             os.makedirs(os.path.dirname(self.transformation_config.transformed_train_data_path), exist_ok=True)
-            pd.DataFrame({
-                'input_ids': tokenized_train_dataset['input_ids'],
-                'token_type_ids': tokenized_train_dataset.get('token_type_ids', []),
-                'attention_mask': tokenized_train_dataset['attention_mask'],
-                'labels': tokenized_train_dataset['labels']
-            }).to_csv(self.transformation_config.transformed_train_data_path, index=False)
+            transformed_train_data.to_csv(self.transformation_config.transformed_train_data_path, index=False)
+            transformed_test_data.to_csv(self.transformation_config.transformed_test_data_path, index=False)
 
-            pd.DataFrame({
-                'input_ids': tokenized_test_dataset['input_ids'],
-                'token_type_ids': tokenized_test_dataset.get('token_type_ids', []),
-                'attention_mask': tokenized_test_dataset['attention_mask'],
-                'labels': tokenized_test_dataset['labels']
-            }).to_csv(self.transformation_config.transformed_test_data_path, index=False)
-
-            logger.info("Data transformation completed successfully")
+            logger.info("Transformed data saved successfully")
 
             return (
                 self.transformation_config.transformed_train_data_path,
