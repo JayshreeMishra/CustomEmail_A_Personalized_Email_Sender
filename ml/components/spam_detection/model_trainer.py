@@ -22,29 +22,24 @@ class SpamModelTrainer:
         try:
             logger.info("Starting model training")
 
-            # Initialize TfidfVectorizer and transform text data
             vectorizer = TfidfVectorizer(max_features=3000)
             X_train = vectorizer.fit_transform(train_texts)
             X_test = vectorizer.transform(test_texts)
 
-            # Define models to evaluate
             models = {
                 "MultinomialNB": MultinomialNB(),
             }
 
-            # Evaluate models
             model_report = evaluate_model(X_train, train_labels, X_test, test_labels, models)
 
-            # Get the best model based on test accuracy
             model_name = max(model_report, key=lambda x: model_report[x]["Test Accuracy"])
-            model= model_name
+            best_model = models[model_name]
             model_score = model_report[model_name]
 
             logger.info(f"Model: {model_name}, Test Accuracy: {model_score['Test Accuracy']:.4f}, "
                         f"Test Precision: {model_score['Test Precision']:.4f}")
 
-            # Save the best model and vectorizer
-            save_obj(file_path=self.model_trainer_config.trained_model_file_path, obj=model)
+            save_obj(file_path=self.model_trainer_config.trained_model_file_path, obj=best_model)
             save_obj(file_path=self.model_trainer_config.vectorizer_file_path, obj=vectorizer)
 
             return model_score["Test Accuracy"], model_score["Test Precision"]
