@@ -27,7 +27,6 @@ class SpamPredictPipeline:
         except Exception as e:
             raise CustomException(e, sys)
 
-        
 
 class CustomData:
     def __init__(self, mail_text: str):
