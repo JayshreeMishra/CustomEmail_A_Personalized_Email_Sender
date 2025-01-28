@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CustomEmail</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{ url_for('static', filename='placeholder.js') }}"></script>
     <script>
         // Function to enforce the line limit
@@ -42,7 +43,25 @@
             .then(response => response.json())
             .then(data => {
                 if (data.corrected_text) {
+                    // Update the message textarea with the corrected text
                     document.getElementById('message').value = data.corrected_text;
+
+                    // Display the changed words
+                    const changedWordsDiv = document.getElementById('changed-words');
+                    if (data.changed_words && data.changed_words.length > 0) {
+                        // Create a list of changed words
+                        const changedWordsList = data.changed_words.map(([original, corrected]) => 
+                            `${original} → ${corrected}`
+                        ).join(', ');
+
+                        // Display the list
+                        changedWordsDiv.textContent = `Changed words: ${changedWordsList}`;
+                        changedWordsDiv.style.color = 'green'; // Set color to green
+                    } else {
+                        // No words were changed
+                        changedWordsDiv.textContent = 'No words were changed.';
+                        changedWordsDiv.style.color = 'gray'; // Set color to gray
+                    }
                 } else {
                     alert('Error correcting spelling: ' + (data.error || 'Unknown error'));
                 }
@@ -83,8 +102,8 @@
 <body>
     <h2>CustomEmail</h2>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
+<!-- Flash Messages -->
+    <!--{% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <ul>
         {% for category, message in messages %}
@@ -92,7 +111,7 @@
         {% endfor %}
     </ul>
     {% endif %}
-    {% endwith %}
+    {% endwith %}-->
 
     <!-- Email Form -->
     <form method="POST" enctype="multipart/form-data">
@@ -138,32 +157,30 @@
         <label for="message">Message:</label>
         <textarea id="message" name="message" required style="width: 400px; height: 200px;"></textarea><br>
     
-        <!-- Buttons for Placeholders -->
         <div>
-            <button type="button" onclick="insertPlaceholder('recipient name')">Insert Recipient Name</button>
-            <button type="button" onclick="insertPlaceholder('recipient company')">Insert Recipient Company</button>
+            <!-- Insert placeholder for recipient name -->
+            <button type="button" onclick="insertPlaceholder('recipient name')" data-tooltip="Insert the recipient's name into the message">Insert Recipient Name</button>
+        
+            <!-- Insert placeholder for recipient company -->
+            <button type="button" onclick="insertPlaceholder('recipient company')" data-tooltip="Insert the recipient's company name into the message">Insert Recipient Company</button>
         </div>
+        
         <br>
-
-        <!-- Buttons for Spelling Corrector and Spam Detection -->
+        
         <div>
-            <button type="button" onclick="correctSpelling()">Spelling Corrector</button>
-            <button type="button" onclick="detectSpam()">Spam Detection</button>
+            <!-- Trigger the spelling corrector -->
+            <button type="button" onclick="correctSpelling()" data-tooltip="Check and correct spelling errors in your message">Spelling Corrector</button>
+        
+            <!-- Trigger spam detection -->
+            <button type="button" onclick="detectSpam()" data-tooltip="Check if the message content might be flagged as spam">Spam Detection</button>
         </div>
-        <br>
-
-        <!-- Display changed words -->
-        <div id="changed-words" style="color: green; font-weight: bold;"></div>
-        <br>
-
-        <!-- Spam Detection Result -->
-        <div id="spam-result" style="color: red; font-weight: bold;"></div>
-        <br>
+        
     
         <label for="file">Attach File:</label>
         <input type="file" name="file"><br>
     
         <button type="submit">Send Email</button>
+            
     </form>    
 </body>
 </html>

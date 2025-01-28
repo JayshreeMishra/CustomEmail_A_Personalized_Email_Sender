@@ -4,52 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CustomEmail</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{ url_for('static', filename='placeholder.js') }}"></script>
-    <script>
-        // Function to enforce the line limit
-        function enforceLineLimit(textarea, maxLines) {
-            textarea.addEventListener('input', function () {
-                // Split the textarea value by lines
-                const lines = textarea.value.split("\n");
-
-                // If the number of lines exceeds the max limit
-                if (lines.length > maxLines) {
-                    alert(`You can only enter up to ${maxLines} lines.`);
-                    // Remove the extra lines
-                    textarea.value = lines.slice(0, maxLines).join("\n");
-                }
-            });
-        }
-
-        // Apply the line limit enforcement on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            const maxLines = 50;
-
-            // Get all textareas to enforce the limit
-            const recipientsTextarea = document.getElementsByName("recipients")[0];
-            const recipientNamesTextarea = document.getElementsByName("recipient_names")[0];
-            const recipientCompaniesTextarea = document.getElementsByName("recipient_companies")[0];
-
-            // Enforce limits for each textarea
-            enforceLineLimit(recipientsTextarea, maxLines);
-            enforceLineLimit(recipientNamesTextarea, maxLines);
-            enforceLineLimit(recipientCompaniesTextarea, maxLines);
-        });
-    </script>
 </head>
 <body>
     <h2>CustomEmail</h2>
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <ul>
-        {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
 
     <!-- Email Form -->
     <form method="POST" enctype="multipart/form-data">
@@ -95,13 +54,29 @@
         <label for="message">Message:</label>
         <textarea id="message" name="message" required style="width: 400px; height: 200px;"></textarea><br>
     
-        <!-- Buttons for Placeholders -->
         <div>
-            <button type="button" onclick="insertPlaceholder('recipient name')">Insert Recipient Name</button>
-            <button type="button" onclick="insertPlaceholder('recipient company')">Insert Recipient Company</button>
+            <!-- Insert placeholder for recipient name -->
+            <button type="button" onclick="insertPlaceholder('recipient name')" data-tooltip="Insert the recipient's name into the message">Insert Recipient Name</button>
+        
+            <!-- Insert placeholder for recipient company -->
+            <button type="button" onclick="insertPlaceholder('recipient company')" data-tooltip="Insert the recipient's company name into the message">Insert Recipient Company</button>
         </div>
+        
         <br>
-
+        
+        <div>
+            <!-- Trigger the spelling corrector -->
+            <button type="button" onclick="correctSpelling()" data-tooltip="Check and correct spelling errors in your message">Spelling Corrector</button>
+        
+            <!-- Trigger spam detection -->
+            <button type="button" onclick="detectSpam()" data-tooltip="Check if the message content might be flagged as spam">Spam Detection</button>
+        </div>
+        
+        <!-- Display area for changed words -->
+        <div id="changed-words" style="margin-top: 10px;"></div>
+        
+        <!-- Display area for spam detection result -->
+        <div id="spam-result" style="margin-top: 10px;"></div>
     
         <label for="file">Attach File:</label>
         <input type="file" name="file"><br>
