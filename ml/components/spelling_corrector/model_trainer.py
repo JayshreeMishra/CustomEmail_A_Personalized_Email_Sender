@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import pickle
 import pandas as pd
 from dataclasses import dataclass
@@ -21,19 +22,37 @@ class SpellingModel:
         self.sym_spell = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
         self.language_tool = LanguageTool('en')
 
-    def correct_spelling(self, texts):
-        corrected_texts = []
-        for text in texts:
-            suggestions = self.sym_spell.lookup_compound(text, max_edit_distance=2)
-            corrected_texts.append(suggestions[0].term if suggestions else text)
-        return corrected_texts
+    def correct_spelling(self, text):
+        words = re.findall(r'\w+|\W+', text)
+        corrected_words = []
+        changed_words = []
 
-    def correct_grammar(self, texts):
-        corrected_texts = []
-        for text in texts:
-            corrected_text = self.language_tool.correct(text)
-            corrected_texts.append(corrected_text)
-        return corrected_texts
+        for word in words:
+            if word.strip() and word.isalpha():  # Only correct alphabetic words
+                suggestions = self.sym_spell.lookup_compound(word, max_edit_distance=2)
+                corrected_word = suggestions[0].term if suggestions else word
+                
+                # Handle case preservation
+                if word.istitle():
+                    corrected_word = corrected_word.capitalize()
+                elif word.isupper():
+                    corrected_word = corrected_word.upper()
+                elif word.islower():
+                    corrected_word = corrected_word.lower()
+
+                if corrected_word != word:
+                    changed_words.append((word, corrected_word))
+                corrected_words.append(corrected_word)
+            else:
+                corrected_words.append(word)  # Preserve non-alphabetic characters
+
+        corrected_text = ''.join(corrected_words)
+        return corrected_text, changed_words
+
+    def correct_grammar(self, text):
+        matches = self.language_tool.check(text)
+        corrected_text = self.language_tool.correct(text)
+        return corrected_text, matches
 
     # Custom methods for pickling
     def __getstate__(self):
@@ -46,8 +65,6 @@ class SpellingModel:
         # Restore the object and recreate the language_tool instance
         self.__dict__.update(state)
         self.language_tool = LanguageTool('en')
-
-
 
 class SpellingModelTrainer:
     def __init__(self):
@@ -76,16 +93,16 @@ class SpellingModelTrainer:
             logger.info("Combined dictionary saved and loaded into SymSpell.")
 
             logger.info("Applying spelling and grammar correction to training and testing data.")
-            spelling_corrected_train = model.correct_spelling(train_data['input_text'])
-            spelling_corrected_test = model.correct_spelling(test_data['input_text'])
+            # Correct spelling for each text in the Series
+            train_data['corrected_text'] = train_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
+            test_data['corrected_text'] = test_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
 
-            grammar_corrected_train = model.correct_grammar(spelling_corrected_train)
-            grammar_corrected_test = model.correct_grammar(spelling_corrected_test)
+            # Correct grammar for each text in the Series
+            train_data['corrected_text'] = train_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
+            test_data['corrected_text'] = test_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
 
             corrected_train_path = train_data_path.replace(".csv", "_corrected.csv")
             corrected_test_path = test_data_path.replace(".csv", "_corrected.csv")
-            train_data['corrected_text'] = grammar_corrected_train
-            test_data['corrected_text'] = grammar_corrected_test
 
             train_data.to_csv(corrected_train_path, index=False)
             test_data.to_csv(corrected_test_path, index=False)
