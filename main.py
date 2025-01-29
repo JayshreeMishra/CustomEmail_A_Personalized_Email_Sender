@@ -1,9 +1,11 @@
 import os, sys
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, jsonify
 from werkzeug.utils import secure_filename
 import email
 
 from app.email_sender import send_email
+from ml.pipeline.predict_pipeline_spam_detection import SpamPredictPipeline
+from ml.pipeline.predict_pipeline_spelling_corrector import SpellingPredictPipeline
 from config.logging_config import logger
 from config.exception import CustomException
 
@@ -11,6 +13,10 @@ template_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 
 app= Flask(__name__, static_folder='app/static', template_folder=template_folder_path)
 app.secret_key = 'mysecretkey'
+
+# Initialize pipelines
+spelling_pipeline = SpellingPredictPipeline()
+spam_pipeline = SpamPredictPipeline()
 
 # File upload folder
 upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload')
@@ -59,13 +65,36 @@ def index():
         else:
             result = "All fields are required!"
 
-        # Display success or error messages
         if not result:
             result = "An unexpected error occurred!"
         flash(result, "success" if "successfully" in result else "danger")
 
     return render_template('email_form.html')
 
+# Route for spam detection
+@app.route('/spam_detection', methods=['POST'])
+def spam_detection():
+    try:
+        data= request.get_json()
+        text= data.get('text', '')
+        is_spam= spam_pipeline.predict(text)
+        return jsonify({'is_spam': bool(is_spam[0])})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
+#Route for spelling correction
+@app.route('/spelling_correction', methods=['POST'])
+def spelling_corrector():
+    try:
+        data= request.get_json()
+        text= data.get('text', '')
+        corrected_text, changed_words= spelling_pipeline.predict(text)
+        return jsonify({
+            'corrected_text': corrected_text,
+            'changed_words': changed_words
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 if __name__== '__main__':
     app.run(debug=True)

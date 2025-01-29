@@ -1,163 +1,98 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #f0f4f8, #cfd8e3);
     margin: 0;
     padding: 0;
-    color: #333;
+    color: #2c3e50;
 }
 
-h2 {
-    text-align: center;
-    margin-top: 20px;
-    color: #0056b3;
-}
-
-form {
-    max-width: 600px;
-    margin: 20px auto;
+.container {
+    max-width: 800px;
+    margin: 40px auto;
     background: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Title Styles */
+.main-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #636e72;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Form Styling */
+.email-form .form-group {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 label {
-    font-weight: bold;
-    display: block;
-    margin-top: 10px;
+    font-weight: 500;
+    margin-bottom: 8px;
 }
 
-input[type="email"],
-input[type="password"],
-input[type="text"],
-textarea {
+input, textarea {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 12px;
     font-size: 14px;
-}
-/* Tooltip Styles */
-button[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 10;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #b0bec5;
+    border-radius: 8px;
+    transition: border-color 0.3s;
 }
 
-button[data-tooltip]:hover::before {
-    content: '';
-    position: absolute;
-    bottom: 115%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px;
-    border-style: solid;
-    border-color: #333 transparent transparent transparent;
-    z-index: 10;
+input:focus, textarea:focus {
+    border-color: #2563eb;
+    outline: none;
 }
 
-
-textarea {
-    resize: none;
-}
-
+/* Button Styling */
 button {
-    background-color: #0056b3;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 15px;
-    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    position: relative;
+    background: #2980b9;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 18px;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s;
 }
 
 button:hover {
-    background-color: #004092;
+    background: #1c5985;
 }
 
-button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-}
-
-/* Tooltip Styles */
-button[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 10;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-button[data-tooltip]:hover::before {
-    content: '';
-    position: absolute;
-    bottom: 115%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px;
-    border-style: solid;
-    border-color: #333 transparent transparent transparent;
-    z-index: 10;
-}
-
-/* Flash Messages */
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 10px auto;
-    max-width: 600px;
-}
-
-li {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-}
-
-li.success {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-li.error {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-/* Result Styles */
-#changed-words, #spam-result {
+.primary-btn {
+    background: #2563eb;
     font-weight: bold;
+}
+
+.primary-btn:hover {
+    background: #1d4ed8;
+}
+
+/* Result Display */
+#changed-words, #spam-result {
+    font-size: 14px;
+    font-weight: 500;
+    color: #e74c3c;
     margin-top: 10px;
-}
-
-#changed-words {
-    color: green;
-}
-
-#spam-result {
-    color: red;
 }

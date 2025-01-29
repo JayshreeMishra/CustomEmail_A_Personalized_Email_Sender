@@ -12,19 +12,14 @@ template_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 app = Flask(__name__, static_folder='app/static', template_folder=template_folder_path)
 app.secret_key = 'mysecretkey'
 
-# File upload folder
-upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload')
-os.makedirs(upload_folder, exist_ok=True)
 
 # Initialize pipelines
 spelling_pipeline = SpellingPredictPipeline()
 spam_pipeline = SpamPredictPipeline()
 
-# File upload folder
 upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload')
 os.makedirs(upload_folder, exist_ok=True)
 
-# Home route: Display email form
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -36,18 +31,15 @@ def index():
         subject = request.form.get('subject')
         message = request.form.get('message')
 
-        # Process recipients
         recipients = [email.strip() for email in recipient_input.split('\n') if email.strip()]
         recipient_names = [email.strip() for email in recipient_names_input.split('\n') if email.strip()]
         recipient_companies = [email.strip() for email in recipient_company_input.split('\n') if email.strip()]
 
-        # Ensure the lists are of the same length
         if len(recipients) != len(recipient_names) or len(recipients) != len(recipient_companies):
             logger.error("The number of recipients, names, and companies must match.")
             flash("The number of recipients, names, and companies must match.", "danger")
             return render_template('email_form.html', error=True)
 
-        # File upload
         file = request.files.get('file')
         attachment = None
 
@@ -57,7 +49,6 @@ def index():
             file.save(file_path)
             attachment = file_path
 
-        # Send email
         if recipients and subject and message:
             try:
                 result = send_email(sender_email, sender_password, recipients, subject, message, recipient_names, recipient_companies, attachment)
@@ -66,7 +57,6 @@ def index():
         else:
             result = "All fields are required!"
 
-        # Display success or error messages
         if not result:
             result = "An unexpected error occurred!"
         flash(result, "success" if "successfully" in result else "danger")
