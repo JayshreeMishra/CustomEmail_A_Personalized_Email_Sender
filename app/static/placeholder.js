@@ -16,24 +16,42 @@ function enforceLineLimit(textarea, maxLines) {
     });
 }
 
-// Function to insert placeholders into the message box
+function updateMessageContent() {
+    const messageDiv = document.getElementById('message');
+    const messageTextarea = document.getElementById('message-content');
+
+    // Update the hidden textarea with the content of the editable div
+    messageTextarea.value = messageDiv.innerHTML;
+}
+
 function insertPlaceholder(placeholder) {
     const messageBox = document.getElementById('message');
     if (!messageBox) return;
 
-    const cursorPosition = messageBox.selectionStart;
-    const textBeforeCursor = messageBox.value.slice(0, cursorPosition);
-    const textAfterCursor = messageBox.value.slice(cursorPosition);
+    // Create an image element
+    const img = document.createElement('img');
+    img.src = `/static/${placeholder.toLowerCase()}.png`;
+    img.alt = placeholder;
+    img.title = placeholder;
+    img.className = 'placeholder-icon';
 
-    messageBox.value = `${textBeforeCursor}|${placeholder}|${textAfterCursor}`;
-    messageBox.selectionStart = messageBox.selectionEnd = cursorPosition + placeholder.length + 2;
-    messageBox.focus();
+    // Insert the image at the cursor position
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(img);
+
+    // Move cursor after the inserted image
+    range.setStartAfter(img);
+    range.setEndAfter(img);
+    selection.removeAllRanges();
+    selection.addRange(range);
 }
 
 // Function to handle spelling correction
-function correctSpelling() {
+function spelling_corrector() {
     const message = document.getElementById('message').value;
-    fetch('/correct_spelling', {
+    fetch('/spelling_correction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: message }),
@@ -53,11 +71,11 @@ function correctSpelling() {
 }
 
 // Function to handle spam detection
-function detectSpam() {
+function spam_detection() {
     const message = document.getElementById('message').value;
     const subject = document.getElementById('subject').value;
     
-    fetch('/detect_spam', {
+    fetch('/spam_detection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: subject + ' ' + message }),
@@ -69,4 +87,46 @@ function detectSpam() {
             : 'This message is NOT SPAM.';
     })
     .catch(error => document.getElementById('spam-result').textContent = 'Error detecting spam: ' + error.message);
+}
+  // Tooltip functionality for buttons
+  const buttons = document.querySelectorAll('.btn');
+  buttons.forEach(button => {
+      const tooltipText = button.getAttribute('data-tooltip');
+      if (tooltipText) {
+          button.addEventListener('mouseenter', () => {
+              const tooltip = document.createElement('span');
+              tooltip.className = 'button-tooltip';
+              tooltip.textContent = tooltipText;
+              button.appendChild(tooltip);
+          });
+          button.addEventListener('mouseleave', () => {
+              const tooltip = button.querySelector('.button-tooltip');
+              if (tooltip) {
+                  tooltip.remove();
+              }
+          });
+      }
+  });
+
+  function insertPlaceholder(placeholder) {
+    const messageBox = document.getElementById('message');
+    if (!messageBox) return;
+
+    // Create an image element
+    const img = document.createElement('img');
+    img.src = `/static/${placeholder}.png`; // Use the placeholder name directly
+    img.alt = placeholder;
+    img.className = 'placeholder-image';
+
+    // Insert the image at the cursor position
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(img);
+
+    // Move cursor after the inserted image
+    range.setStartAfter(img);
+    range.setEndAfter(img);
+    selection.removeAllRanges();
+    selection.addRange(range);
 }
