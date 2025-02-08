@@ -6,39 +6,42 @@ logging.basicConfig(level=logging.INFO, format='[%(asctime)s]: %(message)s:')
 
 project_name= "CustomEmail_A_Personalized_Email_Sender"
 
-
-list_of_files= [
-    f"app/__init__.py",
-    f"app/routes.py",
-    f"app/templates/index.html",
-    f"app/static/style.css",
-    f"app/forms.py",
-    f"app/utils.py",
-    f"ml/__init__.py",
-    f"ml/model.py",
-    f"ml/preprocess.py",
-    f"ml/training/train.py",
-    f"ml/training/config.yaml",
-    f"ml/training/artifacts/",
-    f"ml/tests/test_ml.py",
-    f"tests/test_app.py",
-    f"config/app_config.py",
-    f"config/logging_config.py",
-    f"config/secrets.yaml",
-    f"database/__init__.py",
-    f"database/models.py",
-    f"database/queries.py",
-    f"docs/api_docs.md",
-    f"docs/usage.md",
-    f"logs/app.log",
-    "main.py",
-    "setup.py",
-    "requirements.txt",
+list_of_files = [
+    "app/__init__.py",
+    "app/email_sender.py",
+    "app/utils.py",
+    "app/static/placeholder.js",
+    "app/static/styles.css",
+    "app/templates/email_form.html",
+    "artifacts/",
+    "config/__init__.py",
+    "config/exception.py",
+    "config/logging_config.py",
+    "logs/",
+    "ml/__init__.py",
+    "ml/utils.py",
+    "ml/components/spam_detection/data_ingestion.py",
+    "ml/components/spam_detection/data_transformation.py",
+    "ml/components/spam_detection/model_trainer.py",
+    "ml/components/spelling_corrector/data_ingestion.py",
+    "ml/components/spelling_corrector/data_transformation.py",
+    "ml/components/spelling_corrector/model_trainer.py",
+    "ml/data/",
+    "ml/notebook_experiment/spam_classification.ipynb",
+    "ml/notebook_experiment/spelling_corrector.ipynb",
+    "ml/pipeline/predict_pipeline_spam_detection.py",
+    "ml/pipeline/predict_pipeline_spelling_corrector.py",
+    "tests/",
+    "upload/",
     "__init__.py",
-    "README.md"
-
+    ".gitignore",
+    "LICENSE",
+    "main.py",
+    "README.md",
+    "requirements.txt",
+    "setup.py",
+    "template.py",
 ]
-
 
 for filepath in list_of_files:
     filepath= Path(filepath)

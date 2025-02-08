@@ -22,11 +22,9 @@ def send_email(sender_email, sender_password, recipients, subject, message, reci
             email["From"] = smtp_user
             email["To"] = recipient
 
-            # Customize the message with placeholders
             customized_message = message.replace('|recipient name|', name).replace('|recipient company|', company)
             email.attach(MIMEText(customized_message, 'plain'))
 
-            # Attach file if present and allowed
             if attachment:
                 logger.info(f"Attaching file: {attachment}")
                 attach_file(email, attachment)

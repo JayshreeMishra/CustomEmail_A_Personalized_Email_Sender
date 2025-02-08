@@ -15,7 +15,6 @@ template_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 app= Flask(__name__, static_folder='app/static', template_folder=template_folder_path)
 app.secret_key = 'mysecretkey'
 
-# Initialize pipelines
 spelling_pipeline = SpellingPredictPipeline()
 spam_pipeline = SpamPredictPipeline()
 
@@ -23,7 +22,6 @@ spam_pipeline = SpamPredictPipeline()
 upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload')
 os.makedirs(upload_folder, exist_ok=True) 
 
-# Home route: Display email form
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -41,7 +39,7 @@ def index():
             recipient_names = [name.strip() for name in recipient_names_input.split('\n') if name.strip()]
             recipient_companies = [company.strip() for company in recipient_company_input.split('\n') if company.strip()]
 
-            # Ensure the lists are of the same length
+            # Ensures the lists are of the same length
             if len(recipients) != len(recipient_names) or len(recipients) != len(recipient_companies):
                 logger.error("The number of recipients, names, and companies must match.")
                 flash("The number of recipients, names, and companies must match.", "danger")
@@ -57,7 +55,6 @@ def index():
                 file.save(file_path)
                 attachment = file_path
 
-            # Send email
             if recipients and subject and message:
                 try:
                     result = send_email(sender_email, sender_password, recipients, subject, message, recipient_names, recipient_companies, attachment)
@@ -69,7 +66,7 @@ def index():
             flash(result, "success" if "successfully" in result else "danger")
 
         except Exception as e:
-            print(f"Unexpected error: {str(e)}")  # Log the error
+            print(f"Unexpected error: {str(e)}") 
             flash('Internal Server Error', 'danger')
 
     return render_template('email_form.html')
