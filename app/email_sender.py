@@ -9,8 +9,6 @@ from config.exception import CustomException
 from config.logging_config import logger
 from app.utils import attach_file, authenticate_user
 
-
-
 def send_email(sender_email, sender_password, recipients, subject, message, recipient_names, recipient_companies, attachment=None):
     try:
         #Authenticate sender email
@@ -47,10 +45,3 @@ def send_email(sender_email, sender_password, recipients, subject, message, reci
     except Exception as e:
         logger.error(f"Error occurred: {e}")
         raise CustomException(f"Failed to send email: {e}", sys)
-    
-
-
-
-    
-        
-        

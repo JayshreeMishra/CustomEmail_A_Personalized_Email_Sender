@@ -1,8 +1,8 @@
+
 import sys
 import pickle
 import pandas as pd
 from config.exception import CustomException
-
 
 class SpellingPredictPipeline:
     def __init__(self):

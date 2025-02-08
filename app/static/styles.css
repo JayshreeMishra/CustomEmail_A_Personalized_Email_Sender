@@ -75,96 +75,80 @@ input:focus, textarea:focus {
     border-color: #2563eb;
     outline: none;
 }
+/* Button Tooltip Fix */
+.btn {
+    position: relative;
+}
+
 /* Tooltip Styling */
-.tooltip {
-    position: relative;
-    display: inline-block;
-}
-
-.tooltip .tooltip-text {
-    visibility: hidden;
-    width: 200px;
-    background-color: #2c3e50;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 8px;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%; /* Position above the icon */
-    left: 50%;
-    margin-left: -100px; /* Center the tooltip */
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* Info Icon Styling */
-.info-icon {
-    width: 16px; /* Fixed size for the info icon */
-    height: 16px;
-    vertical-align: middle;
-    margin-left: 5px; /* Space between text and icon */
-    cursor: pointer;
-}
-/* Tooltip for buttons */
-.btn[data-tooltip] {
-    position: relative;
-}
-
-.btn[data-tooltip]::after {
+.btn:not(.no-tooltip)::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%;
+    bottom: 120%;  /* Place tooltip above the button */
     left: 50%;
     transform: translateX(-50%);
-    padding: 5px 10px;
     background-color: #2c3e50;
     color: #fff;
+    padding: 6px 12px;
     border-radius: 6px;
     font-size: 12px;
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    margin-bottom: 10px;
+    pointer-events: none;
+    z-index: 10;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.btn[data-tooltip]:hover::after {
+/* Show Tooltip on Hover */
+.btn:hover::after {
     opacity: 1;
     visibility: visible;
 }
-/* Button Styling */
-button {
+
+/* Base button styling */
+.btn {
     cursor: pointer;
-    background: #2980b9;
+    background: #2980b9; /* Original background color */
     border: none;
     border-radius: 8px;
     padding: 12px 18px;
     color: white;
     font-weight: 500;
     font-size: 14px;
-    transition: all 0.3s;
+    transition: background-color 0.3s;
     margin: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis; /* Handle long button text gracefully */
+    position: relative;
 }
 
-button:hover {
-    background: #1c5985;
+.btn:hover {
+    background: #1c5985; /* Original hover color */
 }
 
-.primary-btn {
-    background: #2563eb;
-    font-weight: bold;
+/* Loading Effect */
+.btn.loading {
+    background-color: #6c757d; /* Change background color to indicate loading */
+    cursor: not-allowed; /* Change cursor to indicate it's not clickable */
 }
 
-.primary-btn:hover {
-    background: #1d4ed8;
+.btn.loading::after {
+    content: '...'; /* Add ellipsis to indicate loading */
+    position: absolute;
+    right: 10px; /* Position the ellipsis */
+    animation: loading 1s infinite; /* Optional: Add animation */
 }
 
+/* Loading Animation */
+@keyframes loading {
+    0% { content: ''; }
+    50% { content: '.'; }
+    100% { content: '...'; }
+}
+
+/* Editable Message */
 .editable-message {
     width: 100%;
     min-height: 150px;
@@ -173,16 +157,40 @@ button:hover {
     font-size: 16px;
     background-color: white;
     border-radius: 8px;
-    text-align: left; /* Ensure text is left-aligned */
-    margin: 0; /* Reset margin */
-    line-height: normal; /* Reset line height */
-    white-space: pre-wrap; /* Preserve line breaks and spaces */
+    text-align: left;
+    margin: 0;
+    line-height: normal;
+    white-space: pre-wrap;
 }
-.placeholder-image {
-    width: 150px; /* Adjust size as needed */
+
+/* Placeholder Image */
+.placeholder-img {
+    max-width: 150px;
+    max-height: 150px;
+    width: auto;
     height: auto;
     margin: 5px;
-    vertical-align: middle; /* Align images properly with text */
+    vertical-align: middle;
+    user-select: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* Flash Messages */
+.flash {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.flash.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.flash.danger {
+    background-color: #f8d7da;
+    color: #721c24;
 }
 
 /* Contact Links */
@@ -216,17 +224,51 @@ button:hover {
     color: #2c3e50;
 }
 
-/* About the Project Link */
-.about-link {
-    display: block;
-    margin-top: 20px;
-    font-size: 18px;
-    color: #007BFF;
-    text-decoration: none;
+/* Common Link Styles */
+.link {
+    color: #2822cf; /* Set the color for both links */
+    text-decoration: none; /* Remove underline by default */
+    font-size: 18px; /* Set font size */
+    display: block; /* Ensure links are block elements */
+    margin-top: 20px; /* Add margin for spacing */
 }
 
-.about-link:hover {
-    text-decoration: underline;
+/* Hover Effect */
+.link:hover {
+    text-decoration: underline; /* Underline on hover */
+    color: #2822cf; /* Maintain the same color on hover */
+}
+
+.results-section {
+    margin-bottom: 20px;
+}
+
+/* Tooltip for i_icon */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #2c3e50;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Info Icon Styling */
@@ -235,7 +277,5 @@ button:hover {
     height: 16px;
     vertical-align: middle;
     margin-left: 5px;
-}
-.results-section {
-    margin-bottom: 20px; /* Add spacing below the results */
+    cursor: pointer;
 }
