@@ -22,4 +22,4 @@ CustomEmail is a feature-rich web application that simplifies the process of com
        - Python LanguageTool (grammar checking)  
 
 ## **🚀 Future Plans & Improvements**  
-This project is under continuous development, with plans to introduce even more advanced features. If you have suggestions or feedback on areas that could be improved, feel free to share your thoughts!  
+This project is under continuous development, with plans to introduce more features. If you have suggestions or feedback on areas that could be improved, feel free to share your thoughts!  
