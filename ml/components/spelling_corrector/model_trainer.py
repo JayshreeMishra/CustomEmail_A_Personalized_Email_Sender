@@ -5,7 +5,7 @@ import pickle
 import pandas as pd
 from dataclasses import dataclass
 from symspellpy import SymSpell
-from language_tool_python import LanguageTool
+#from language_tool_python import LanguageTool
 
 from config.logging_config import logger
 from config.exception import CustomException
@@ -22,8 +22,8 @@ class SpellingModel:
         self.sym_spell = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
         #self.language_tool = LanguageTool('en')
         #This will use the public API instead of running a Java-based local server and it won't get errors during deployment
-        from language_tool_python import LanguageToolPublicAPI
-        self.language_tool = LanguageToolPublicAPI('en') 
+        #from language_tool_python import LanguageToolPublicAPI
+        #self.language_tool = LanguageToolPublicAPI('en') 
 
     def correct_spelling(self, text):
         words = re.findall(r'\w+|\W+', text)
@@ -67,7 +67,7 @@ class SpellingModel:
     def __setstate__(self, state):
         # Restore the object and recreate the language_tool instance
         self.__dict__.update(state)
-        self.language_tool = LanguageTool('en')
+        #self.language_tool = LanguageTool('en')
 
 class SpellingModelTrainer:
     def __init__(self):
