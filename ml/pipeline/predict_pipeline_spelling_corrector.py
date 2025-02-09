@@ -1,9 +1,10 @@
 
-import sys
+import sys, os
 import pickle
 import pandas as pd
 from config.exception import CustomException
 
+"""
 class SpellingPredictPipeline:
     def __init__(self):
         model_path = r"artifacts\spelling_model.pkl"
@@ -16,6 +17,32 @@ class SpellingPredictPipeline:
                 self.preprocessor = pickle.load(f)
         except Exception as e:
             raise CustomException(e, sys)
+"""
+#Changes made for deplyment
+class SpellingPredictPipeline:
+    def __init__(self):
+        # Use cross-platform file paths
+        model_path = os.path.join("artifacts", "spelling_model.pkl")
+        preprocessor_path = os.path.join("artifacts", "spelling_preprocessor.pkl")
+
+        # Debugging: Check if files exist
+        if not os.path.exists(model_path) or not os.path.exists(preprocessor_path):
+            print("❌ Model or preprocessor file is missing!")
+            print("Current Directory:", os.getcwd())
+            if os.path.exists("artifacts"):
+                print("Contents of artifacts/:", os.listdir("artifacts"))
+            else:
+                print("❌ artifacts/ folder is missing!")
+        
+        try:
+            with open(model_path, 'rb') as f:
+                self.model = pickle.load(f)
+            
+            with open(preprocessor_path, 'rb') as f:
+                self.preprocessor = pickle.load(f)
+        except Exception as e:
+            raise CustomException(e, sys)
+
 
     def predict(self, text):
         try:
