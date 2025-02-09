@@ -20,7 +20,10 @@ class SpellingModelTrainerConfig:
 class SpellingModel:
     def __init__(self):
         self.sym_spell = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
-        self.language_tool = LanguageTool('en')
+        #self.language_tool = LanguageTool('en')
+        #This will use the public API instead of running a Java-based local server and it won't get errors during deployment
+        from language_tool_python import LanguageToolPublicAPI
+        self.language_tool = LanguageToolPublicAPI('en') 
 
     def correct_spelling(self, text):
         words = re.findall(r'\w+|\W+', text)
@@ -93,13 +96,15 @@ class SpellingModelTrainer:
             logger.info("Combined dictionary saved and loaded into SymSpell.")
 
             logger.info("Applying spelling and grammar correction to training and testing data.")
+            
+            #Ditching correct_grammer for deployment it is giving errors
             # Correct spelling for each text in the Series
-            train_data['corrected_text'] = train_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
-            test_data['corrected_text'] = test_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
+            #train_data['corrected_text'] = train_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
+            #test_data['corrected_text'] = test_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
 
             # Correct grammar for each text in the Series
-            train_data['corrected_text'] = train_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
-            test_data['corrected_text'] = test_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
+            #train_data['corrected_text'] = train_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
+            #test_data['corrected_text'] = test_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
 
             corrected_train_path = train_data_path.replace(".csv", "_corrected.csv")
             corrected_test_path = test_data_path.replace(".csv", "_corrected.csv")
