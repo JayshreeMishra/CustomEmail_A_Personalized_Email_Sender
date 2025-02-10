@@ -5,19 +5,6 @@ import pandas as pd
 from config.exception import CustomException
 
 """
-class SpellingPredictPipeline:
-    def __init__(self):
-        model_path = r"artifacts\spelling_model.pkl"
-        preprocessor_path=r"artifacts\spelling_preprocessor.pkl"
-        try:
-            with open(model_path, 'rb') as f:
-                self.model = pickle.load(f)
-            
-            with open(preprocessor_path, 'rb') as f:
-                self.preprocessor = pickle.load(f)
-        except Exception as e:
-            raise CustomException(e, sys)
-"""
 #Changes made for deplyment
 class SpellingPredictPipeline:
     def __init__(self):
@@ -42,7 +29,20 @@ class SpellingPredictPipeline:
                 self.preprocessor = pickle.load(f)
         except Exception as e:
             raise CustomException(e, sys)
+"""
 
+class SpellingPredictPipeline:
+    def __init__(self):
+        model_path = r"artifacts\spelling_model.pkl"
+        preprocessor_path=r"artifacts\spelling_preprocessor.pkl"
+        try:
+            with open(model_path, 'rb') as f:
+                self.model = pickle.load(f)
+            
+            with open(preprocessor_path, 'rb') as f:
+                self.preprocessor = pickle.load(f)
+        except Exception as e:
+            raise CustomException(e, sys)
 
     def predict(self, text):
         try:

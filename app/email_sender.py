@@ -30,14 +30,21 @@ def send_email(sender_email, sender_password, recipients, subject, message, reci
                 attach_file(email, attachment)
             
             try:
-                # Send the email
+                # Try TLS (port 587)
                 with smtplib.SMTP(smtp_server, 587) as server:
                     server.starttls()
                     server.login(smtp_user, smtp_password)
                     server.sendmail(smtp_user, recipient, email.as_string())
-                logger.info(f"Email sent successfully to {recipient}")
             except Exception as e:
-                logger.error(f"Failed to send email to {recipient}: {e}")
+                logger.warning(f"Port 587 failed for {smtp_server}, trying port 465...")
+                try:
+                    # Try SSL (port 465)
+                    with smtplib.SMTP_SSL(smtp_server, 465) as server:
+                        server.login(smtp_user, smtp_password)
+                        server.sendmail(smtp_user, recipient, email.as_string())
+                except Exception as e:
+                    logger.error(f"Failed to send email via {smtp_server}: {e}")
+                    raise CustomException(f"Failed to send email: {e}", sys)
 
         return "Email sent successfully with attachment!" if attachment else "Email sent successfully without attachment!"
     except Exception as e:

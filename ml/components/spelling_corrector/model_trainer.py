@@ -5,7 +5,7 @@ import pickle
 import pandas as pd
 from dataclasses import dataclass
 from symspellpy import SymSpell
-#from language_tool_python import LanguageTool
+from language_tool_python import LanguageTool
 
 from config.logging_config import logger
 from config.exception import CustomException
@@ -20,7 +20,7 @@ class SpellingModelTrainerConfig:
 class SpellingModel:
     def __init__(self):
         self.sym_spell = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
-        #self.language_tool = LanguageTool('en')
+        self.language_tool = LanguageTool('en')
         #This will use the public API instead of running a Java-based local server and it won't get errors during deployment
         #from language_tool_python import LanguageToolPublicAPI
         #self.language_tool = LanguageToolPublicAPI('en') 
@@ -67,7 +67,7 @@ class SpellingModel:
     def __setstate__(self, state):
         # Restore the object and recreate the language_tool instance
         self.__dict__.update(state)
-        #self.language_tool = LanguageTool('en')
+        self.language_tool = LanguageTool('en')
 
 class SpellingModelTrainer:
     def __init__(self):
@@ -97,14 +97,13 @@ class SpellingModelTrainer:
 
             logger.info("Applying spelling and grammar correction to training and testing data.")
             
-            #Ditching correct_grammer for deployment it is giving errors
             # Correct spelling for each text in the Series
-            #train_data['corrected_text'] = train_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
-            #test_data['corrected_text'] = test_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
+            train_data['corrected_text'] = train_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
+            test_data['corrected_text'] = test_data['input_text'].apply(lambda x: model.correct_spelling(x)[0])
 
             # Correct grammar for each text in the Series
-            #train_data['corrected_text'] = train_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
-            #test_data['corrected_text'] = test_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
+            train_data['corrected_text'] = train_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
+            test_data['corrected_text'] = test_data['corrected_text'].apply(lambda x: model.correct_grammar(x)[0])
 
             corrected_train_path = train_data_path.replace(".csv", "_corrected.csv")
             corrected_test_path = test_data_path.replace(".csv", "_corrected.csv")

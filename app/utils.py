@@ -5,6 +5,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 from typing import Optional
 from ensure import ensure_annotations
+import dns.resolver 
 
 from config.exception import CustomException
 from config.logging_config import logger
@@ -41,6 +42,16 @@ def attach_file(email: MIMEMultipart, attachment: Optional[str]) -> None:
                 raise CustomException(f"An error occurred while attaching the file: {str(e)}", sys)
             
 
+def get_mx_record(domain):
+    """Retrieves the MX record for the given email domain."""
+    try:
+        answers = dns.resolver.resolve(domain, 'MX')  # Query MX records
+        mx_record = str(answers[0].exchange)  # Extract the first MX record
+        return mx_record
+    except Exception as e:
+        logger.error(f"Failed to find MX record for {domain}: {e}")
+        return None
+
 @ensure_annotations
 def authenticate_user(sender_email, sender_password):
     try:
@@ -62,11 +73,15 @@ def authenticate_user(sender_email, sender_password):
             "mail.com": "smtp.mail.com",
         }
 
-        email_domain= sender_email.split("@")[-1]
+        email_domain = sender_email.split("@")[-1]
+        smtp_server = smtp_servers.get(email_domain)
 
-        smtp_server= smtp_servers.get(email_domain)
+        # If SMTP server is not predefined, it will find MX record dynamically
         if not smtp_server:
-            raise ValueError(f"Unsupported email domain: {email_domain}")
+            logger.warning(f"Custom domain detected: {email_domain}. Performing MX lookup...")
+            smtp_server = get_mx_record(email_domain)
+            if not smtp_server:
+                raise ValueError(f"Could not determine SMTP server for {email_domain}")
 
         logger.info(f"Authentication successful for {sender_email}")
         return smtp_server, sender_email, sender_password

@@ -16,7 +16,8 @@ numpy==2.0.2
 datasets==3.2.0
 symspellpy==6.7.8
 transformers==4.48.0
-# language_tool_python==2.8.1
+language_tool_python==2.8.1
 torch==2.5.1
 gunicorn==23.0.0
+dnspython==2.7.0
 -e .
