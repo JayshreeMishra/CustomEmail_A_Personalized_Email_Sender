@@ -18,52 +18,78 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.btn').forEach(button => {
         button.addEventListener('click', function() {
             this.classList.add('loading');
-            
-            // Simulate a loading delay (replace this with your actual task)
             setTimeout(() => {
                 this.classList.remove('loading'); // Remove loading class after task
             }, 2000); // Adjust the timeout as needed
         });
     });
-
-    // Scroll to the top of the page when it loads
-    window.scrollTo(0, 0);
 });
 
 function sendingemail() {
     const messageBox = document.getElementById('message');
-    let messageContent = messageBox.innerHTML;
+    const subjectBox = document.getElementById('subject');
 
-    // Step 1: Replace placeholder images with text placeholders
+    // Check if the elements exist
+    if (!messageBox || !subjectBox) {
+        console.error('Message box or subject box not found.');
+        return; // Exit the function if elements are not found
+    }
+
+    // Get the current content of the message and subject
+    let messageContent = messageBox.innerHTML || ''; // Fallback to empty string
+    let subjectContent = subjectBox.innerHTML || ''; // Use innerHTML for contenteditable div
+
+    // Log the contents for debugging
+    console.log('Message Content:', messageContent);
+    console.log('Subject Content:', subjectContent);
+
+    // Step 1: Replace placeholder images with text placeholders in both message and subject
     messageContent = messageContent.replace(/<img[^>]*src="\/static\/recipientname\.png"[^>]*>/g, '|recipient name|');
     messageContent = messageContent.replace(/<img[^>]*src="\/static\/companyname\.png"[^>]*>/g, '|recipient company|');
 
-    // Step 2: Clean up HTML tags
+    subjectContent = subjectContent.replace(/<img[^>]*src="\/static\/recipientname\.png"[^>]*>/g, '|recipient name|');
+    subjectContent = subjectContent.replace(/<img[^>]*src="\/static\/companyname\.png"[^>]*>/g, '|recipient company|');
+
+    // Step 2: Clean up HTML tags in message content
     messageContent = messageContent.replace(/<div>/g, ''); // Remove opening <div> tags
     messageContent = messageContent.replace(/<\/div>/g, '\n'); // Replace closing </div> tags with line breaks
     messageContent = messageContent.replace(/<br\s*\/?>/g, '\n'); // Replace <br> tags with line breaks
-
-    // Step 3: Preserve quotation marks and other formatting
     messageContent = messageContent.replace(/&quot;/g, '"'); // Replace HTML entity for quotes with actual quotes
+
+    // Clean up HTML tags in subject content
+    subjectContent = subjectContent.replace(/&nbsp;/g, ' '); // Replace &nbsp; with a regular space
+    subjectContent = subjectContent.replace(/&quot;/g, '"'); // Replace HTML entity for quotes with actual quotes
 
     // Update the hidden textarea with the current message content
     document.getElementById('message-content').value = messageContent; 
 
+    // Update the hidden textarea for the subject
+    document.getElementById('subject-content').value = subjectContent; // Populate hidden textarea for subject
+
     // Collect form data
-    const formData = new FormData(document.getElementById('emailForm'));
-    console.log([...formData.entries()]);  // Debugging check
+    const emailForm = document.getElementById('emailForm');
+    const formData = new FormData(emailForm);
+    console.log('Submitting form with data:', [...formData.entries()]);  // Debugging check
 
     // Send data to the server
     fetch('/', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.text())  // Expect HTML response
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();  // Expect HTML response
+    })
     .then(html => {
         document.body.innerHTML = html;  // Replace page content with response
         window.scrollTo(0, 0);  // Scroll to the top
     })
-    .catch(error => alert('❌ Error: ' + error.message));
+    .catch(error => {
+        console.error('Error during fetch:', error);
+        alert('❌ Error: ' + error.message);
+    });
 }
 
 // Function to enforce the line limit
@@ -77,63 +103,19 @@ function enforceLineLimit(textarea, maxLines) {
     });
 }
 
-function updateMessageContent() {
-    const messageDiv = document.getElementById('message');
-    const messageTextarea = document.getElementById('message-content');
+// Function to convert images to placeholders
+function convertImagesToPlaceholders() {
+    const subjectElement = document.getElementById('subject');
+    const messageElement = document.getElementById('message');
 
-    // Update the hidden textarea with the content of the editable div
-    messageTextarea.value = messageDiv.innerHTML;
-}
+    // Replace image tags with text placeholders
+    subjectElement.innerHTML = subjectElement.innerHTML
+        .replace(/<img[^>]*src="\/static\/recipientname\.png"[^>]*>/g, '|recipient name|')
+        .replace(/<img[^>]*src="\/static\/companyname\.png"[^>]*>/g, '|recipient company|');
 
-// Prevent form reset
-document.getElementById('emailForm').addEventListener('submit', function(event) {
-    event.preventDefault();  // Prevent page reload
-    sendEmail();
-});
-
-function insertPlaceholder(placeholder) {
-    const messageBox = document.getElementById('message');
-    if (!messageBox) return;
-
-    let imgTag;
-    if (placeholder === 'recipientname') {
-        imgTag = '<img src="/static/recipientname.png" alt="Recipient Name" class="placeholder-img" />';
-    } else if (placeholder === 'companyname') {
-        imgTag = '<img src="/static/companyname.png" alt="Company Name" class="placeholder-img" />';
-    } else {
-        return; // If the placeholder is not recognized, exit the function
-    }
-
-    // Insert the image tag at the cursor position
-    const selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        range.deleteContents(); // Remove any selected text
-
-        // Create the image element
-        const imgElement = new DOMParser().parseFromString(imgTag, 'text/html').body.firstChild; 
-        imgElement.addEventListener('click', function() {
-            // Remove the image when clicked
-            imgElement.remove();
-        });
-
-        // Insert the image
-        range.insertNode(imgElement); 
-
-        // Move the cursor to the right of the image
-        range.setStartAfter(imgElement);
-        range.setEndAfter(imgElement);
-        selection.removeAllRanges(); // Clear the selection
-        selection.addRange(range); // Add the new range to the selection
-    } else {
-        messageBox.innerHTML += imgTag; // Append to the end if no selection
-    }
-
-    messageBox.focus(); // Focus back on the message box
-
-    // Debugging: Log the current selection and range to the browser's console
-    console.log("Current selection:", selection);
-    console.log("Current range:", selection.rangeCount > 0 ? selection.getRangeAt(0) : null);
+    messageElement.innerHTML = messageElement.innerHTML
+        .replace(/<img[^>]*src="\/static\/recipientname\.png"[^>]*>/g, '|recipient name|')
+        .replace(/<img[^>]*src="\/static\/companyname\.png"[^>]*>/g, '|recipient company|');
 }
 
 // Handle the Enter key event to insert a line break
@@ -157,15 +139,47 @@ document.getElementById('message').addEventListener('keydown', function(event) {
     }
 });
 
-function convertImagesToPlaceholders() {
-    const messageBox = document.getElementById('message');
-    let htmlContent = messageBox.innerHTML;
+// Function to insert placeholders in both subject and message
+function insertPlaceholder(placeholder, target) {
+    let targetElement = document.getElementById(target);
+    if (!targetElement) return;
 
-    // Replace image tags with text placeholders
-    htmlContent = htmlContent.replace(/<img[^>]*src="path\/to\/recipientname\.png"[^>]*>/g, '|recipient name|');
-    htmlContent = htmlContent.replace(/<img[^>]*src="path\/to\/companyname\.png"[^>]*>/g, '|recipient company|');
+    let imgTag;
+    if (placeholder === 'recipientname') {
+        imgTag = '<img src="/static/recipientname.png" alt="Recipient Name" class="placeholder-img" />';
+    } else if (placeholder === 'companyname') {
+        imgTag = '<img src="/static/companyname.png" alt="Company Name" class="placeholder-img" />';
+    } else {
+        return; // If the placeholder is not recognized, exit the function
+    }
 
-    messageBox.innerHTML = htmlContent; // Update the message box with the new content
+    // Insert at cursor position
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents(); // Remove any selected text
+
+        // Create the image element from the string
+        const imgElement = new DOMParser().parseFromString(imgTag, 'text/html').body.firstChild;
+        
+        // Make image removable when clicked
+        imgElement.addEventListener('click', function() {
+            imgElement.remove();
+        });
+
+        // Insert the image at the cursor
+        range.insertNode(imgElement);
+
+        // Move the cursor after the image
+        range.setStartAfter(imgElement);
+        range.setEndAfter(imgElement);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    } else {
+        targetElement.innerHTML += imgTag; // Fallback: Append to the end
+    }
+
+    targetElement.focus();
 }
 
 // Function to handle spelling correction

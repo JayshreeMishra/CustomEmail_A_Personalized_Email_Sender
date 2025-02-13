@@ -148,6 +148,19 @@ input:focus, textarea:focus {
     100% { content: '...'; }
 }
 
+.editable-subject {
+    border: 1px solid #ccc; /* Light gray border */
+    padding: 8px; /* Add some padding for better appearance */
+    min-height: 40px; /* Set a minimum height */
+    border-radius: 4px; /* Optional: rounded corners */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+}
+
+.editable-subject:focus {
+    border-color: #007bff; /* Change border color on focus (Bootstrap primary color) */
+    outline: none; /* Remove default outline */
+}
+
 /* Editable Message */
 .editable-message {
     width: 100%;

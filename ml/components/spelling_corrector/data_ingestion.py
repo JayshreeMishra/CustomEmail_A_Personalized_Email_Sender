@@ -52,13 +52,13 @@ class SpellingDataIngestion:
         
 
 """
-this is to test the data ingestion component
+#this is to test the data ingestion component
 if __name__=="__main__":
     obj= SpellingDataIngestion()
     obj.initiate_data_ingestion()
 """
 """
-this is to test the data ingestion component
+#this is to test the data ingestion component
 from ml.components.spelling_corrector.data_transformation import SpellingDataTransformation
 from ml.components.spelling_corrector.data_transformation import SpellingDataTransformationConfig
 
@@ -70,7 +70,7 @@ if __name__=="__main__":
     data_transformation.initiate_data_transformation(train_data, test_data)
 """
 """
-this is to test the model trainer component
+#this is to test the model trainer component
 from ml.components.spelling_corrector.data_ingestion import SpellingDataIngestion
 from ml.components.spelling_corrector.data_transformation import SpellingDataTransformation
 from ml.components.spelling_corrector.model_trainer import SpellingModelTrainer

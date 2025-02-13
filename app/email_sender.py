@@ -18,7 +18,9 @@ def send_email(sender_email, sender_password, recipients, subject, message, reci
         for recipient, name, company in zip(recipients, recipient_names, recipient_companies):
         # Compose the email
             email = MIMEMultipart()
-            email["Subject"] = subject
+
+            customized_subject = subject.replace('|recipient name|', name).replace('|recipient company|', company)
+            email["Subject"] = customized_subject
             email["From"] = smtp_user
             email["To"] = recipient
 
