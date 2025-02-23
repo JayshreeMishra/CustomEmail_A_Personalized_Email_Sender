@@ -57,8 +57,12 @@ function sendingemail() {
     messageContent = messageContent.replace(/&quot;/g, '"'); // Replace HTML entity for quotes with actual quotes
 
     // Clean up HTML tags in subject content
+    subjectContent = subjectContent.replace(/<br\s*\/?>/g, '\n'); // Replace <br> tags with new lines
+    subjectContent = subjectContent.replace(/<div>/g, ''); // Remove opening <div> tags
+    subjectContent = subjectContent.replace(/<\/div>/g, ''); // Remove closing </div> tags
+    subjectContent = subjectContent.replace(/&amp;/g, '&'); // Decode &amp; to &
     subjectContent = subjectContent.replace(/&nbsp;/g, ' '); // Replace &nbsp; with a regular space
-    subjectContent = subjectContent.replace(/&quot;/g, '"'); // Replace HTML entity for quotes with actual quotes
+    subjectContent = subjectContent.replace(/&quot;/g, '"'); // Replace &quot; with actual quotes
 
     // Update the hidden textarea with the current message content
     document.getElementById('message-content').value = messageContent; 
@@ -120,6 +124,27 @@ function convertImagesToPlaceholders() {
 
 // Handle the Enter key event to insert a line break
 document.getElementById('message').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent the default action
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+
+            // Create a line break element
+            const lineBreak = document.createElement('br');
+            range.insertNode(lineBreak); // Insert the line break
+
+            // Move the cursor to the right of the line break
+            range.setStartAfter(lineBreak);
+            range.setEndAfter(lineBreak);
+            selection.removeAllRanges(); // Clear the selection
+            selection.addRange(range); // Add the new range to the selection
+        }
+    }
+});
+
+// Handle the Enter key event for the subject
+document.getElementById('subject').addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         event.preventDefault(); // Prevent the default action
         const selection = window.getSelection();
