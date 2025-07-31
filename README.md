@@ -37,35 +37,35 @@
 ## 📁 Project Structure
 CustomEmail_A_Personalized_Email_Sender/
 │
-├── main.py                         # Entry point of the Flask web app
-├── template.py                    # Email message template formatter
-├── requirements.txt               # Project dependencies
-├── setup.py                       # Package setup (if needed for deployment)
+├── ml/                                # All machine learning logic
+│   ├── components/                    # Modular components for each ML feature
+│   │   ├── spam_detection/            # Spam classification pipeline
+│   │   │   ├── data_ingestion.py
+│   │   │   ├── data_transformation.py
+│   │   │   └── model_trainer.py
+│   │   └── spelling_corrector/        # Spelling correction pipeline
+│   │       ├── data_ingestion.py
+│   │       ├── data_transformation.py
+│   │       └── model_trainer.py
+│   │
+│   ├── pipeline/                      # Inference pipelines
+│   │   ├── predict_pipeline_spam_detection.py
+│   │   ├── predict_pipeline_spelling_corrector.py
+│   │   └── utils.py
+│   │
+│   └── notebook_experiment/          # Jupyter notebooks for prototyping
+│
+├── app/                               # Web application logic
+│   ├── templates/                     # HTML forms
+│   └── email_sender.py                # Flask routes and email logic
+│
+├── tests/                             # Unit test scripts
+├── upload/                            # Uploaded files (attachments)
+│
+├── main.py                            # Entry point to run the Flask app
+├── template.py                        # Handles dynamic email template generation
+├── requirements.txt                   # Project dependencies
+├── setup.py                           # Setup configuration (optional)
 ├── README.md
 ├── LICENSE
-│
-├── app/                           # Web interface and core logic
-│   ├── templates/                 # HTML templates (e.g., email_form.html)
-│   └── email_sender.py           # Email sending logic and Flask routes
-│
-├── ml/
-│   └── components/                # ML model modules
-│       ├── spam_detection/        # Spam classification pipeline
-│       │   ├── data_ingestion.py
-│       │   ├── data_transformation.py
-│       │   └── model_trainer.py
-│       └── spelling_corrector/    # Spelling correction pipeline
-│           ├── data_ingestion.py
-│           ├── data_transformation.py
-│           └── model_trainer.py
-│
-├── pipeline/
-│   ├── predict_pipeline_spam_detection.py
-│   ├── predict_pipeline_spelling_corrector.py
-│   └── utils.py                  # Shared pipeline utilities
-│
-├── notebook_experiment/          # Jupyter notebooks for model prototyping
-│
-├── tests/                        # Unit tests (if any)
-└── upload/                       # File upload handling
-
+└── .gitignore
