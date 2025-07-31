@@ -39,9 +39,10 @@
 ```
 
 ├── app/                               # Web application logic
-│   ├── static/                    
+│   ├── static/                        # Images and CSS
 │   ├── templates/                     # HTML forms
-│   └── email_sender.py                # Flask routes and email logic
+│   ├── email_sender.py                # email sending logic
+│   └── utils.py
 │
 │
 ├── ml/                                # All machine learning logic
@@ -50,11 +51,13 @@
 │   │   │   ├── data_ingestion.py
 │   │   │   ├── data_transformation.py
 │   │   │   └── model_trainer.py
-│   │   └── spelling\_corrector/        # Spelling correction pipeline
+│   │   └── spelling_corrector/        # Spelling correction pipeline
 │   │       ├── data_ingestion.py
 │   │       ├── data_transformation.py
 │   │       └── model_trainer.py
 │   │
+│   ├── data/
+│   |
 │   ├── pipeline/                      # Inference pipelines
 │   │   ├── predict_pipeline_spam_detection.py
 │   │   ├── predict_pipeline_spelling_corrector.py
@@ -63,9 +66,9 @@
 │   └── notebook_experiment/          # Jupyter notebooks for prototyping
 │
 ├── main.py                            # Entry point to run the Flask app
-├── template.py                        # Handles dynamic email template generation
+├── template.py                        
 ├── requirements.txt                   # Project dependencies
-├── setup.py                           # Setup configuration (optional)
+├── setup.py                           # Setup configuration 
 ├── README.md
 ├── LICENSE
 └── .gitignore
