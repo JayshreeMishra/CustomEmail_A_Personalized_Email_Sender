@@ -34,8 +34,15 @@
 
 ---
 
-## 📁 Project Structure
-CustomEmail_A_Personalized_Email_Sender/
+### 📁 Project Structure
+
+```
+
+├── app/                               # Web application logic
+│   ├── static/                    
+│   ├── templates/                     # HTML forms
+│   └── email_sender.py                # Flask routes and email logic
+│
 │
 ├── ml/                                # All machine learning logic
 │   ├── components/                    # Modular components for each ML feature
@@ -43,7 +50,7 @@ CustomEmail_A_Personalized_Email_Sender/
 │   │   │   ├── data_ingestion.py
 │   │   │   ├── data_transformation.py
 │   │   │   └── model_trainer.py
-│   │   └── spelling_corrector/        # Spelling correction pipeline
+│   │   └── spelling\_corrector/        # Spelling correction pipeline
 │   │       ├── data_ingestion.py
 │   │       ├── data_transformation.py
 │   │       └── model_trainer.py
@@ -55,13 +62,6 @@ CustomEmail_A_Personalized_Email_Sender/
 │   │
 │   └── notebook_experiment/          # Jupyter notebooks for prototyping
 │
-├── app/                               # Web application logic
-│   ├── templates/                     # HTML forms
-│   └── email_sender.py                # Flask routes and email logic
-│
-├── tests/                             # Unit test scripts
-├── upload/                            # Uploaded files (attachments)
-│
 ├── main.py                            # Entry point to run the Flask app
 ├── template.py                        # Handles dynamic email template generation
 ├── requirements.txt                   # Project dependencies
@@ -69,3 +69,24 @@ CustomEmail_A_Personalized_Email_Sender/
 ├── README.md
 ├── LICENSE
 └── .gitignore
+
+```
+---
+
+## 🧠 Why This Matters
+Cold email outreach is noisy and easily flagged as spam. **CustomEmail** solves:
+- Poor personalization → automated, template-driven fields
+- High spam risk → ML-powered content inspection
+- Typos → real-time correction for professional delivery
+
+---
+
+## 🚀 Future Additions
+- Tone analysis (friendly, formal, urgent)
+- Sent Email dashboard (send volume, response rate trends)
+- Enhanced grammar correction via lightweight transformer
+
+---
+
+## 👩‍💻 Built By
+A Data scientist solving outreach friction with applied ML. See my other work at [GitHub](https://github.com/JayshreeMishra).
